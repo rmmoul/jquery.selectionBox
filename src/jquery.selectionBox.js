@@ -9,6 +9,7 @@
 // the semi-colon before function invocation is a safety net against concatenated
 // scripts and/or other plugins which may not be closed properly.
 ;
+var container_ids = ''; // we'll use this to hold an id given to the select input, and carry it over as a class
 (function($, window, undefined) {
 
     // undefined is used here as the undefined global variable in ECMAScript 3 is
@@ -92,10 +93,13 @@
         showList: function() {
             this.state = true;
             this.$options.css('display', 'block');
+            this.$options.css('z-index', '99'); // need to make sure this is above other items
         },
 
         wrapElement: function() {
-            this.$el.wrap('<div class=' + this.options.selectContainerClass + ' />');
+            // we'll be moving the id of the input to a class of the new input
+        	container_ids = this.$el.attr('id');
+            this.$el.wrap('<div class="' + this.options.selectContainerClass  + ' ' + container_ids + '" />');
             this.$selectionBox = this.$el.parents('.' + this.options.selectContainerClass);
 
             return this;
@@ -131,10 +135,21 @@
             var selectionBox = this.$selectionBox,
                 options = this.options,
                 text, listItem;
+            var selected_class = '';
 
             this.$el.find('option').each(function(i, el) {
                 text = $(el).text();
-                listItem = '<li class="' + options.optionContainerClass + '">' + text + '</li>';
+                
+                //is this selected?
+                if($(el).attr('selected') == 'selected'){
+                	selected_class = ' selected ';
+                	$('div.' + container_ids + ' .current').html(text);
+                }
+                else{
+                		selected_class = '';
+                }
+
+                listItem = '<li class="' + options.optionContainerClass + selected_class + '">' + text + '</li>';
 
                 selectionBox.find('.' + options.optionsContainerClass).append(listItem);
             });
@@ -145,6 +160,7 @@
         hideList: function() {
             this.state = false;
             this.$options.css('display', 'none');
+            this.$options.css('z-index', '1'); // put z-index back to 1
 
             return this;
         },
@@ -154,6 +170,9 @@
             var self = this;
 
             this.$selectionBox.on('click.toggleOptions', function(e) {
+                // hide any open lists when clicking a new one
+                $('.selection-box ul.options').hide();
+                
                 if(!self.state) {
                     self.showList();
                 } else {
