@@ -1,3 +1,15 @@
+# Updates by rmmoul
+
+The source here is mostly unchanged, but I've added a few items:
+
+- When your select input has an id, that id gets assigned to the new styled dropdown as a class. This way they can be targeted using css to be styled differently than each other.
+- The new select dropdowns are given a z-index of 99 when they're opened to help keep them above other elements. They're returned to a z-index of 1 when closed. This should probably be set up as an initialization option at some point...
+- Any open select dropdowns (of this script's) will be closed when opening a different select dropdown.
+
+I've added the above to the code to satisfy my own needs since the project I forked this from hasn't been updated in two years. 
+
+-rmmoul
+
 # jQuery Selectionbox
 
 A simple jQuery plugin for quickly creating styled selection boxes
